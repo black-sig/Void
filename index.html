@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="VOID">
+    <link rel="apple-touch-icon" href="https://i.postimg.cc/5936YKpW/IMG-5271.jpg">
+    
+    <title>VOID</title>
+    <link rel="icon" href="https://i.postimg.cc/5936YKpW/IMG-5271.jpg" type="image/jpeg">
+
+    <style>
+        /* =========================================
+           1. المتغيرات (ألوان الفراغ والنيون)
+           ========================================= */
+        :root {
+            --bg-color: #000000;
+            --text-main: #f5f5f7;
+            --text-sec: #a1a1a6;
+            --card-width: 82vw; 
+            --card-max-width: 360px; 
+            --card-gap: 20px;
+            --accent: #a855f7; 
+            --accent-dark: #7e22ce;
+            --danger: #ff453a;
+            --nebula-purple: rgba(126, 34, 206, 0.15);
+        }
+
+        /* منع النسخ والتقريب (Native App Experience) */
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0; padding: 0; outline: none;
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;
+            -webkit-touch-callout: none !important;
+            -webkit-user-drag: none !important;
+        }
+
+        body {
+            background-color: var(--bg-color); 
+            color: var(--text-main);
+            padding-bottom: env(safe-area-inset-bottom, 80px);
+            overflow-x: hidden;
+            min-height: 100vh;
+            animation: openFromTop 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            touch-action: pan-y !important;
+            overscroll-behavior-y: none;
+        }
+
+        /* =========================================
+           2. خلفية الفضاء (Deep Space Portal)
+           ========================================= */
+        #stars-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; opacity: 0.7; }
+        .space-background { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; pointer-events: none; overflow: hidden; background: #000; }
+        .nebula { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.7; animation: nebulaPulse 25s infinite alternate ease-in-out; }
+        .nebula-1 { top: -20%; left: -20%; width: 80vw; height: 80vw; background: radial-gradient(circle, var(--nebula-purple) 0%, transparent 60%); }
+        .nebula-2 { bottom: -10%; right: -20%; width: 70vw; height: 70vw; background: radial-gradient(circle, rgba(168, 85, 247, 0.08) 0%, transparent 60%); animation-delay: -7s; }
+
+        @keyframes nebulaPulse { 0% { transform: scale(1) translate(0, 0); opacity: 0.4; } 100% { transform: scale(1.1) translate(4%, 4%); opacity: 0.8; } }
+
+        /* =========================================
+           3. الرأس والأزرار العلوية (Ultra-Soft Glass)
+           ========================================= */
+        .header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 15px 20px; padding-top: calc(env(safe-area-inset-top) + 15px);
+            margin: 0 20px 10px; position: sticky; top: 0; z-index: 100; 
+            background: rgba(0, 0, 0, 0.1); backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px); border-radius: 0 0 24px 24px;
+            border: 1px solid rgba(255, 255, 255, 0.03); transform: translateZ(0);
+        }
+        .user-info { display: flex; align-items: center; gap: 12px; }
+        .profile-img { width: 45px; height: 45px; border-radius: 12px; background-image: url('https://i.postimg.cc/5936YKpW/IMG-5271.jpg'); background-size: cover; border: 1px solid rgba(168, 85, 247, 0.3); }
+        .glass-btn-style {
+            font-weight: bold; color: #fff; cursor: pointer; border-radius: 20px; 
+            background: rgba(255, 255, 255, 0.01); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05); display: flex; justify-content: center; align-items: center; transition: 0.2s;
+        }
+        .glass-btn-style:active { background: rgba(255, 255, 255, 0.05); transform: scale(0.96); }
+
+        .top-actions-container { display: flex; flex-direction: column; gap: 15px; margin: 20px; }
+        .action-btn {
+            width: 100%; padding: 18px; font-size: 16px; background: rgba(255, 255, 255, 0.01); 
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.04); 
+            color: #fff; border-radius: 24px; font-weight: bold; text-align: center; transition: 0.2s; display: flex; justify-content: center; align-items: center; cursor: pointer;
+        }
+        .action-btn:active { transform: scale(0.96); background: rgba(255, 255, 255, 0.04); }
+
+        /* =========================================
+           4. شريط تطبيقات KSign (Ultra-Minimalist)
+           ========================================= */
+        .ksign-section-header { text-align: center; margin: 30px 20px 20px; }
+        .ksign-title { font-size: 22px; font-weight: 900; color: #fff; letter-spacing: -0.5px; }
+
+        .cards-scroll-container { 
+            display: flex; gap: var(--card-gap); width: 100%; overflow-x: auto; 
+            padding-top: 10px; padding-bottom: 30px; 
+            padding-inline: calc(50vw - (min(var(--card-width), var(--card-max-width)) / 2)); 
+            scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; 
+        }
+        .cards-scroll-container::-webkit-scrollbar { display: none; }
+
+        .ksign-card { 
+            flex: 0 0 min(var(--card-width), var(--card-max-width)); width: min(var(--card-width), var(--card-max-width)); 
+            scroll-snap-align: center; scroll-snap-stop: always; 
+            background: rgba(255, 255, 255, 0.01); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 35px; padding: 40px 25px 30px; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; transition: transform 0.3s ease;
+        }
+        .ksign-card:active { transform: scale(0.97); }
+
+        .main-app-icon { width: 110px; height: 110px; border-radius: 28px; object-fit: cover; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); pointer-events: none;}
+        .front-title { font-size: 24px; font-weight: bold; color: #fff; margin-bottom: 8px; pointer-events: none;}
+        .front-sub { font-size: 15px; color: var(--text-sec); margin-bottom: 30px; pointer-events: none;}
+        
+        .install-action-btn { 
+            background: rgba(168, 85, 247, 0.05); border: 1px solid rgba(168, 85, 247, 0.2); 
+            color: #e9d5ff; font-weight: bold; font-size: 17px; padding: 16px 0; border-radius: 22px; cursor: pointer; width: 100%; transition: 0.2s; margin-bottom: 20px;
+        }
+        .install-action-btn:active { background: rgba(168, 85, 247, 0.15); transform: scale(0.95); }
+
+        .card-notes { width: 100%; display: flex; flex-direction: column; gap: 8px; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.05); pointer-events: none;}
+        .note-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-sec); text-align: right; }
+        .note-icon { width: 14px; height: 14px; fill: var(--text-sec); opacity: 0.8; }
+
+        /* =========================================
+           5. الميزات (Neon Accents)
+           ========================================= */
+        .features-grid { display: flex; flex-direction: column; gap: 15px; margin: 0 20px 30px; }
+        .feature-card {
+            background: rgba(255, 255, 255, 0.01); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 20px;
+            display: flex; flex-direction: column; align-items: flex-end; text-align: right;
+        }
+        .f-icon-box {
+            width: 42px; height: 42px; background: rgba(168, 85, 247, 0.1); border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; margin-bottom: 12px; border: 1px solid rgba(168, 85, 247, 0.2);
+        }
+        .f-icon-box svg { width: 22px; height: 22px; fill: var(--accent); }
+        .f-title { font-size: 18px; font-weight: bold; color: #fff; margin-bottom: 6px; }
+        .f-desc { font-size: 13px; color: var(--text-sec); line-height: 1.6; }
+
+        /* =========================================
+           6. التحذير وبطاقة VIP
+           ========================================= */
+        .important-alert { 
+            margin: 20px; padding: 18px; background: rgba(255, 69, 58, 0.05); 
+            border: 1px solid rgba(255, 69, 58, 0.15); border-radius: 20px; 
+            font-size: 13px; line-height: 1.6; color: #ff8a84; text-align: center; 
+            backdrop-filter: blur(10px); display: flex; flex-direction: column; align-items: center; gap: 10px;
+        }
+        .alert-svg { width: 20px; height: 20px; fill: #ff6961; }
+
+        .buy-card { 
+            margin: 0 20px 30px; padding: 30px; background: rgba(255, 255, 255, 0.01); 
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.04); text-align: center; 
+        }
+        .vip-group-title { font-size: 15px; font-weight: bold; margin-bottom: 12px; text-align: right; color: var(--accent); }
+        .vip-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .vip-row-label { font-size: 15px; color: #fff; }
+        .vip-row-price { font-size: 18px; font-weight: bold; color: #fff; }
+        
+        .buy-btn { 
+            padding: 18px 40px; font-size: 16px; margin-top: 20px; display: flex; 
+            width: 100%; background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); 
+            border-radius: 24px; justify-content: center; align-items: center; font-weight: bold; transition: 0.2s; cursor: pointer;
+        }
+        .buy-btn:active { background: rgba(255, 255, 255, 0.1); transform: scale(0.96); }
+
+        /* =========================================
+           7. شاشة التحميل
+           ========================================= */
+        .loading-overlay { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s ease; 
+        }
+        .loading-overlay.active { opacity: 1; pointer-events: all; }
+        .spinner-box { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .spinner { width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.05); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        .loading-text { font-size: 16px; font-weight: bold; color: #fff; letter-spacing: 0.5px; }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .fade-in-up { animation: fadeInUp 0.8s ease backwards; }
+        @keyframes openFromTop { 0% { opacity: 0; transform: translateY(-30px); } 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="space-background">
+        <div class="nebula nebula-1"></div>
+        <div class="nebula nebula-2"></div>
+    </div>
+    <canvas id="stars-canvas"></canvas>
+
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner-box">
+            <div class="spinner"></div>
+            <div class="loading-text" data-key="loadingText">جاري المعالجة...</div>
+        </div>
+    </div>
+
+    <header class="header">
+        <div class="user-info">
+            <div class="profile-img"></div>
+            <div class="location-text">
+                <span style="font-size: 10px; color: var(--text-sec);" data-key="location">المنصة الرسمية</span><br>
+                <span style="font-size: 18px; font-weight: 900;">VOID</span>
+            </div>
+        </div>
+        <div class="icon-btn glass-btn-style" style="width: 45px; height: 45px; border-radius: 14px; font-size: 14px;" onclick="toggleLanguage()" id="langBtn">EN</div>
+    </header>
+
+    <div id="home-view">
+        
+        <div class="top-actions-container fade-in-up">
+            <div class="action-btn" data-key="protectBtn" id="btnProtection" onclick="handleActionClick('protectionLink')">تثبيت ملف الحماية</div>
+            <div class="action-btn" data-key="downloadCertsBtn" id="btnCerts" onclick="handleActionClick('certificatesLink')">تحميل جميع الشهادات</div>
+        </div>
+
+        <div class="ksign-section-header fade-in-up">
+            <h2 class="ksign-title" data-key="ksignHeader">تطبيقات KSign المتاحة</h2>
+        </div>
+        
+        <div class="cards-scroll-container fade-in-up" id="ksignTrack">
+            </div>
+
+        <div class="features-grid fade-in-up">
+            <div class="feature-card">
+                <div class="f-icon-box"><svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg></div>
+                <div class="f-title" data-key="feat1Title">سرعة التثبيت</div>
+                <div class="f-desc" data-key="feat1Desc">خوادم سريعة لتوقيع وتثبيت التطبيقات في ثواني معدودة دون انتظار</div>
+            </div>
+            <div class="feature-card">
+                <div class="f-icon-box"><svg viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18-.21 0-.41-.06-.57-.18l-7.9-4.44A.991.991 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18.21 0 .41.06.57.18l7.9 4.44c.32.17.53.5.53.88v9zM12 4.15L6.04 7.5 12 10.85l5.96-3.35L12 4.15zM5 15.91l6 3.38v-6.71L5 9.19v6.72zm14 0v-6.72l-6 3.39v6.71l6-3.38z"/></svg></div>
+                <div class="f-title" data-key="feat2Title">تثبيت أي IPA</div>
+                <div class="f-desc" data-key="feat2Desc">وقع وحمل أي ملف IPA بسهولة وسرعة دون أي تعقيدات</div>
+            </div>
+            <div class="feature-card">
+                <div class="f-icon-box"><svg viewBox="0 0 24 24"><path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1h-4v-2h4zM9 4c.55 0 1 .45 1 1h-4c0-.55.45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83 8.62 12 11 8.76l1-1.36 1 1.36L15.38 12 17 10.83 14.92 8H20v6z"/></svg></div>
+                <div class="f-title" data-key="feat3Title">شهادة مجانية مؤقتة</div>
+                <div class="f-desc" data-key="feat3Desc">الموقع يوفر شهادات مجانية دائماً ولكن قد تتعطل من 1 واحد الى 7 ايام وللحصول على شهادة بدون توقف تواصل معنا عبر الحسابات الموجودة داخل الموقع</div>
+            </div>
+        </div>
+
+        <div class="important-alert fade-in-up">
+            <svg class="alert-svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+            <div class="alert-text" data-key="alert"><strong>تنبيه هام:</strong> إذا واجهت مشكلة في تشغيل التطبيقات، فهذا يعني أن جهازك مدرج في البلاك ليست. نوصيك بالاشتراك في الشهادة المدفوعة.</div>
+        </div>
+
+        <div class="buy-card fade-in-up">
+            <h3 style="font-size: 20px; color: #fff; margin-bottom: 20px;" data-key="vipTitle">الاشتراك بشهادة المطور (VIP)</h3>
+            
+            <div style="background: rgba(255,255,255,0.01); border-radius: 20px; padding: 20px; border: 1px solid rgba(255,255,255,0.05);">
+                <div class="vip-group-title" data-key="vipDel">تفعيل يستغرق يوم:</div>
+                <div class="vip-row"><span class="vip-row-label" data-key="vipNoW">بدون ضمان</span><span class="vip-row-price">10$</span></div>
+                <div class="vip-row" style="margin-bottom:0;"><span class="vip-row-label" data-key="vipMonth">ضمان شهر</span><span class="vip-row-price">15$</span></div>
+            </div>
+
+            <div class="buy-btn" data-key="buyBtn" id="btnSubscribe" onclick="handleActionClick('supportLink')">الاشتراك الآن</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('contextmenu', e => e.preventDefault(), { passive: false });
+        document.addEventListener('dragstart', e => e.preventDefault(), { passive: false });
+        document.addEventListener('touchstart', function(e) { if(e.touches.length > 1) e.preventDefault(); }, { passive: false });
+        document.addEventListener('gesturestart', e => e.preventDefault());
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(e) { let now = (new Date()).getTime(); if (now - lastTouchEnd <= 300) e.preventDefault(); lastTouchEnd = now; }, false);
+    </script>
+
+    <script>
+        // الكائن الذي سيحمل الروابط بعد جلبها من JSON
+        let siteLinks = {
+            supportLink: "#",
+            channelLink: "#",
+            protectionLink: "#",
+            certificatesLink: "#",
+            ksignLinks: []
+        };
+
+        // دالة جلب الروابط وتوليد البطاقات
+        async function fetchLinksAndGenerateCards() {
+            const track = document.getElementById('ksignTrack');
+            const directInstallIcon = `<svg class="note-icon" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>`;
+            const rocketIcon = `<svg class="note-icon" viewBox="0 0 24 24"><path d="M13.13 22.19l-1.63-3.83c1.57-.21 3.05-.76 4.37-1.62l1.63 3.83c-1.39.73-2.9 1.15-4.37 1.62zM7.67 16.74c1.32.86 2.8 1.41 4.37 1.62l-1.63 3.83c-1.47-.47-2.98-.89-4.37-1.62l1.63-3.83zm12.03-3.03c.86 1.32 1.41 2.8 1.62 4.37l-3.83-1.63c.73-1.39 1.15-2.9 1.62-4.37l4.42 1.63zM2.19 13.13l3.83-1.63c.21 1.57.76 3.05 1.62 4.37L3.81 17.5c-.73-1.39-1.15-2.9-1.62-4.37zm18.31-7.06l-4.42 1.63c-.47-1.47-.89-2.98-1.62-4.37l3.83 1.63c.86 1.32 1.41 2.8 1.62 4.37zm-3.03-2.03c1.32.86 2.8 1.41 4.37 1.62l-1.63 3.83c-1.39-.73-2.9-1.15-4.37-1.62l1.63-3.83zM4.37 2.19c1.57.21 3.05.76 4.37 1.62L7.11 7.64c-1.39-.73-2.9-1.15-4.37-1.62L4.37 2.19zM22 12c0-5.52-4.48-10-10-10S2 6.48 2 12s4.48 10 10 10 10-4.48 10-10zM12 7c2.76 0 5 2.24 5 5s-2.24 5-5 5-5-2.24-5-5 2.24-5 5-5z"/></svg>`;
+
+            try {
+                // جلب الروابط من ملف links.json
+                const response = await fetch('links.json');
+                const data = await response.json();
+                
+                // تحديث الروابط في الذاكرة
+                if(data.supportLink) siteLinks.supportLink = data.supportLink;
+                if(data.channelLink) siteLinks.channelLink = data.channelLink;
+                if(data.protectionLink) siteLinks.protectionLink = data.protectionLink;
+                if(data.certificatesLink) siteLinks.certificatesLink = data.certificatesLink;
+                if(data.ksignLinks) siteLinks.ksignLinks = data.ksignLinks;
+
+                let html = '';
+                // توليد البطاقات بناءً على عدد الروابط في JSON
+                for(let i = 0; i < siteLinks.ksignLinks.length; i++) {
+                    const appUrl = siteLinks.ksignLinks[i] || "#";
+                    html += `
+                    <div class="ksign-card">
+                        <img src="https://i.postimg.cc/fLk2HCyk/IMG-3180.jpg" class="main-app-icon" alt="KSign">
+                        <div class="front-title" data-key="appName">كي ساين</div>
+                        <div class="front-sub" data-key="appVer">نسخة ${i + 1}</div>
+                        <div class="install-action-btn" data-key="installBtn" onclick="handleInstallClick('${appUrl}')">تثبيت</div>
+                        
+                        <div class="card-notes">
+                            <div class="note-item">${directInstallIcon} <span data-key="noteDirect">تثبيت مباشر</span></div>
+                            <div class="note-item">${rocketIcon} <span data-key="noteFast">استضافات صاروخية</span></div>
+                        </div>
+                    </div>`;
+                }
+                track.innerHTML = html;
+                toggleLanguage(currentLang, true); // تحديث الترجمة للبطاقات الجديدة
+                
+            } catch (error) {
+                console.error("Error loading links:", error);
+                track.innerHTML = '<div style="color:#ff6961; text-align:center; padding: 20px;">خطأ في تحميل التطبيقات. تأكد من رفع ملف links.json</div>';
+            }
+        }
+
+        // النجوم
+        function initStars() {
+            const canvas = document.getElementById('stars-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const stars = [];
+            for(let i = 0; i < 200; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+                    radius: Math.random() * 1.5, vy: Math.random() * 0.5 + 0.1
+                });
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                for(let star of stars) {
+                    ctx.moveTo(star.x, star.y);
+                    ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                    star.y -= star.vy;
+                    if(star.y < 0) { star.y = canvas.height; star.x = Math.random() * canvas.width; }
+                }
+                ctx.fill();
+                requestAnimationFrame(draw);
+            }
+            draw();
+            window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+        }
+
+        // الترجمة
+        const translations = {
+            ar: { 
+                location: "المنصة الرسمية", protectBtn: "تثبيت ملف الحماية", downloadCertsBtn: "تحميل جميع الشهادات",
+                ksignHeader: "تطبيقات KSign المتاحة", appName: "كي ساين", appVer: "نسخة", installBtn: "تثبيت", noteDirect: "تثبيت مباشر", noteFast: "استضافات صاروخية",
+                feat1Title: "سرعة التثبيت", feat1Desc: "خوادم سريعة لتوقيع وتثبيت التطبيقات في ثواني معدودة دون انتظار", feat2Title: "تثبيت أي IPA", feat2Desc: "وقع وحمل أي ملف IPA بسهولة وسرعة دون أي تعقيدات", feat3Title: "شهادة مجانية مؤقتة", feat3Desc: "الموقع يوفر شهادات مجانية دائماً ولكن قد تتعطل من 1 واحد الى 7 ايام وللحصول على شهادة بدون توقف تواصل معنا عبر الحسابات الموجودة داخل الموقع",
+                alert: "<strong>تنبيه هام:</strong> إذا واجهت مشكلة في تشغيل التطبيقات، فهذا يعني أن جهازك مدرج في البلاك ليست. نوصيك بالاشتراك في الشهادة المدفوعة.",
+                vipTitle: "الاشتراك بشهادة المطور (VIP)", vipDel: "تفعيل يستغرق يوم:", vipNoW: "بدون ضمان", vipMonth: "ضمان شهر", buyBtn: "الاشتراك الآن", loadingText: "جاري المعالجة..."
+            },
+            en: { 
+                location: "OFFICIAL PLATFORM", protectBtn: "Install Protection", downloadCertsBtn: "Download All Certificates",
+                ksignHeader: "Available KSign Apps", appName: "KSign", appVer: "Version", installBtn: "INSTALL", noteDirect: "Direct Install", noteFast: "Rocket Hosting",
+                feat1Title: "Installation Speed", feat1Desc: "Fast servers to sign and install applications in seconds without waiting", feat2Title: "Install any IPA", feat2Desc: "Sign and download any IPA file easily and quickly without complications", feat3Title: "Temporary Free Cert", feat3Desc: "The site provides free certs but they may fail in 1-7 days. For a non-stop cert, contact our support inside the site.",
+                alert: "<strong>ALERT:</strong> If you face installation issues, your device is blacklisted. Subscribe to VIP.",
+                vipTitle: "Developer Cert VIP", vipDel: "Delayed Activation (1 Day):", vipNoW: "No Warranty", vipMonth: "1 Month Warranty", buyBtn: "Subscribe Now", loadingText: "Processing..."
+            }
+        };
+
+        let currentLang = 'ar';
+
+        function toggleLanguage(forcedLang, keepCurrent = false) {
+            if(!keepCurrent) { currentLang = currentLang === 'ar' ? 'en' : 'ar'; } else if (forcedLang) { currentLang = forcedLang; }
+            document.documentElement.lang = currentLang; document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            document.getElementById('langBtn').innerText = currentLang === 'ar' ? 'EN' : 'AR';
+            
+            document.querySelectorAll('[data-key]').forEach(el => { 
+                const key = el.getAttribute('data-key');
+                if(key === 'appVer') {
+                    const match = el.innerText.match(/\d+/);
+                    if(match) el.innerText = `${translations[currentLang][key]} ${match[0]}`;
+                } else if (translations[currentLang][key]) { el.innerHTML = translations[currentLang][key]; }
+            });
+        }
+
+        // معالجة توجيه الأزرار العلوية والاشتراك (يقرأ الرابط من الـ JSON)
+        function handleActionClick(linkKey) {
+            const url = siteLinks[linkKey];
+            if (!url || url === '#') return;
+
+            const loadingModal = document.getElementById('loading-overlay');
+            loadingModal.classList.add('active');
+            setTimeout(() => {
+                window.location.href = url;
+                setTimeout(() => { loadingModal.classList.remove('active'); }, 500);
+            }, 800);
+        }
+
+        // معالجة أزرار التثبيت (تحويل للرابط الخاص به ثم لقناة التلجرام)
+        function handleInstallClick(installUrl) {
+            if (!installUrl || installUrl === '#') return;
+
+            const loadingModal = document.getElementById('loading-overlay');
+            loadingModal.classList.add('active');
+
+            // 1. فتح رابط التطبيق
+            window.location.href = installUrl;
+
+            // 2. التحويل لقناة التلجرام المخزنة في JSON
+            setTimeout(() => {
+                const channelUrl = siteLinks.channelLink && siteLinks.channelLink !== '#' ? siteLinks.channelLink : 'https://t.me/hl00ss';
+                window.location.href = channelUrl;
+                setTimeout(() => { loadingModal.classList.remove('active'); }, 1000);
+            }, 3000);
+        }
+
+        window.onload = function() {
+            initStars();
+            fetchLinksAndGenerateCards();
+        };
+    </script>
+</body>
+</html>
