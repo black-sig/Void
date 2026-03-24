@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="VOID">
+    <link rel="apple-touch-icon" href="https://i.postimg.cc/5936YKpW/IMG-5271.jpg">
+    
+    <title>VOID</title>
+    <link rel="icon" href="https://i.postimg.cc/5936YKpW/IMG-5271.jpg" type="image/jpeg">
+
+    <style>
+        /* =========================================
+           1. المتغيرات (ألوان الفراغ والنيون)
+           ========================================= */
+        :root {
+            --bg-color: #000000;
+            --text-main: #f5f5f7;
+            --text-sec: #a1a1a6;
+            --card-width: 82vw; 
+            --card-max-width: 320px; 
+            --card-gap: 15px;
+            --accent: #a855f7; 
+            --accent-dark: #7e22ce;
+            --danger-bg: rgba(255, 69, 58, 0.08);
+            --danger-border: rgba(255, 69, 58, 0.25);
+            --danger-text: #ff8a84;
+            --nebula-purple: rgba(126, 34, 206, 0.15);
+        }
+
+        /* منع النسخ والتقريب */
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0; padding: 0; outline: none;
+            -webkit-user-select: none !important;
+            user-select: none !important;
+        }
+
+        body {
+            background-color: var(--bg-color); 
+            color: var(--text-main);
+            padding-bottom: env(safe-area-inset-bottom, 80px);
+            overflow-x: hidden;
+            min-height: 100vh;
+            animation: openFromTop 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            touch-action: pan-y !important;
+            overscroll-behavior-y: none;
+        }
+
+        /* =========================================
+           2. خلفية الفضاء
+           ========================================= */
+        #stars-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; opacity: 0.7; }
+        .space-background { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; pointer-events: none; overflow: hidden; background: #000; }
+        .nebula { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.7; animation: nebulaPulse 25s infinite alternate ease-in-out; }
+        .nebula-1 { top: -20%; left: -20%; width: 80vw; height: 80vw; background: radial-gradient(circle, var(--nebula-purple) 0%, transparent 60%); }
+        .nebula-2 { bottom: -10%; right: -20%; width: 70vw; height: 70vw; background: radial-gradient(circle, rgba(168, 85, 247, 0.08) 0%, transparent 60%); animation-delay: -7s; }
+
+        @keyframes nebulaPulse { 0% { transform: scale(1) translate(0, 0); opacity: 0.4; } 100% { transform: scale(1.1) translate(4%, 4%); opacity: 0.8; } }
+
+        /* =========================================
+           3. الرأس
+           ========================================= */
+        .header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 15px 20px; padding-top: calc(env(safe-area-inset-top) + 15px);
+            margin: 0 20px 10px; position: sticky; top: 0; z-index: 100; 
+            background: rgba(0, 0, 0, 0.1); backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px); border-radius: 0 0 24px 24px;
+            border: 1px solid rgba(255, 255, 255, 0.03); transform: translateZ(0);
+        }
+        .user-info { display: flex; align-items: center; gap: 12px; }
+        .profile-img { width: 45px; height: 45px; border-radius: 12px; background-image: url('https://i.postimg.cc/5936YKpW/IMG-5271.jpg'); background-size: cover; border: 1px solid rgba(168, 85, 247, 0.3); }
+        .glass-btn-style {
+            font-weight: bold; color: #fff; cursor: pointer; border-radius: 20px; 
+            background: rgba(255, 255, 255, 0.01); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05); display: flex; justify-content: center; align-items: center; transition: 0.2s;
+        }
+        .glass-btn-style:active { background: rgba(255, 255, 255, 0.05); transform: scale(0.96); }
+
+        /* =========================================
+           4. النص التعريفي
+           ========================================= */
+        .hero-section { text-align: center; margin: 30px 20px 20px; animation: fadeInUp 0.8s ease backwards; }
+        .hero-title { font-size: 26px; font-weight: 900; color: #fff; margin-bottom: 12px; line-height: 1.3; }
+        .hero-title span { color: var(--accent); }
+        .hero-desc { font-size: 14px; color: var(--text-sec); line-height: 1.6; padding: 0 10px; }
+
+        .top-actions-container { display: flex; flex-direction: column; gap: 15px; margin: 0 20px 30px; }
+        .action-btn {
+            width: 100%; padding: 18px; font-size: 16px; background: rgba(255, 255, 255, 0.01); 
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.04); 
+            color: #fff; border-radius: 24px; font-weight: bold; text-align: center; transition: 0.2s; display: flex; justify-content: center; align-items: center; cursor: pointer;
+        }
+        .action-btn:active { transform: scale(0.96); background: rgba(255, 255, 255, 0.04); }
+
+        /* =========================================
+           5. شريط تطبيقات KSign
+           ========================================= */
+        .ksign-section-header { text-align: center; margin: 30px 20px 10px; }
+        .ksign-title { font-size: 22px; font-weight: 900; color: #fff; letter-spacing: -0.5px; }
+
+        .cards-scroll-container { 
+            display: flex; gap: var(--card-gap); width: 100%; overflow-x: auto; 
+            padding-top: 10px; padding-bottom: 20px; 
+            padding-inline: calc(50vw - (min(var(--card-width), var(--card-max-width)) / 2)); 
+            scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; 
+        }
+        .cards-scroll-container::-webkit-scrollbar { display: none; }
+
+        .ksign-card { 
+            flex: 0 0 min(var(--card-width), var(--card-max-width)); width: min(var(--card-width), var(--card-max-width)); 
+            scroll-snap-align: center; scroll-snap-stop: always; 
+            background: rgba(255, 255, 255, 0.01); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 30px; 
+            padding: 25px 15px 25px; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; transition: transform 0.3s ease;
+        }
+        .ksign-card:active { transform: scale(0.97); }
+
+        .main-app-icon { width: 85px; height: 85px; border-radius: 22px; object-fit: cover; margin-bottom: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); pointer-events: none;}
+        
+        .front-title { font-size: 17px; font-weight: bold; color: #fff; margin-bottom: 5px; pointer-events: none; text-align: center;}
+        .front-sub { font-size: 11px; color: var(--text-sec); margin-bottom: 18px; pointer-events: none; text-align: center; line-height: 1.4; padding: 0 5px; height: 31px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;}
+        
+        .install-action-btn { 
+            background: rgba(168, 85, 247, 0.05); border: 1px solid rgba(168, 85, 247, 0.2); 
+            color: #e9d5ff; font-weight: bold; font-size: 14px; padding: 10px 0; border-radius: 16px; cursor: pointer; width: 60%; transition: 0.2s; margin-bottom: 0;
+        }
+        .install-action-btn:active { background: rgba(168, 85, 247, 0.15); transform: scale(0.95); }
+
+        /* =========================================
+           6. الميزات 
+           ========================================= */
+        .features-grid { display: flex; flex-direction: column; gap: 15px; margin: 30px 20px 30px; }
+        .feature-card { background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; align-items: flex-end; text-align: right; }
+        .f-icon-box { width: 42px; height: 42px; background: rgba(168, 85, 247, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; border: 1px solid rgba(168, 85, 247, 0.2); }
+        .f-icon-box svg { width: 22px; height: 22px; fill: var(--accent); }
+        .f-title { font-size: 18px; font-weight: bold; color: #fff; margin-bottom: 6px; }
+        .f-desc { font-size: 13px; color: var(--text-sec); line-height: 1.6; }
+
+        /* =========================================
+           7. قسم التحذير (نمط Appiraq)
+           ========================================= */
+        .important-alert { 
+            margin: 0 20px 20px; padding: 16px 20px; 
+            background: var(--danger-bg); border: 1px solid var(--danger-border); 
+            border-radius: 18px; text-align: right; line-height: 1.7;
+        }
+        .alert-text { font-size: 13px; color: var(--danger-text); }
+        .alert-icon { display: inline-block; margin-left: 5px; font-size: 15px; vertical-align: middle; }
+
+        /* =========================================
+           8. بطاقة الشراء (نمط Appiraq بسعر 10$)
+           ========================================= */
+        .buy-card { 
+            margin: 0 20px 40px; padding: 25px 20px; 
+            background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.05); 
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+        }
+        .buy-title { font-size: 18px; font-weight: bold; color: #fff; margin-bottom: 12px; }
+        
+        .price-container { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+        .old-price { font-size: 16px; color: var(--text-sec); text-decoration: line-through; }
+        .new-price { font-size: 26px; font-weight: 900; color: var(--accent); text-shadow: 0 0 15px rgba(168, 85, 247, 0.3); }
+
+        .buy-btn { 
+            width: 100%; max-width: 250px; padding: 16px; font-size: 16px; font-weight: bold;
+            background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.15); 
+            color: #fff; border-radius: 20px; display: flex; justify-content: center; align-items: center; 
+            cursor: pointer; transition: 0.2s; margin-bottom: 15px;
+        }
+        .buy-btn:active { transform: scale(0.96); background: rgba(255, 255, 255, 0.1); }
+        .buy-footer { font-size: 11px; color: var(--text-sec); line-height: 1.5; padding: 0 10px; }
+
+        /* شاشة التحميل */
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s ease; }
+        .loading-overlay.active { opacity: 1; pointer-events: all; }
+        .spinner-box { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .spinner { width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.05); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        .loading-text { font-size: 16px; font-weight: bold; color: #fff; letter-spacing: 0.5px; }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .fade-in-up { animation: fadeInUp 0.8s ease backwards; }
+        @keyframes openFromTop { 0% { opacity: 0; transform: translateY(-30px); } 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="space-background">
+        <div class="nebula nebula-1"></div>
+        <div class="nebula nebula-2"></div>
+    </div>
+    <canvas id="stars-canvas"></canvas>
+
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner-box">
+            <div class="spinner"></div>
+            <div class="loading-text" data-key="loadingText">جاري المعالجة...</div>
+        </div>
+    </div>
+
+    <header class="header">
+        <div class="user-info">
+            <div class="profile-img"></div>
+            <div class="location-text">
+                <span style="font-size: 10px; color: var(--text-sec);" data-key="location">المنصة الرسمية</span><br>
+                <span style="font-size: 18px; font-weight: 900;">VOID</span>
+            </div>
+        </div>
+        <div class="icon-btn glass-btn-style" style="width: 45px; height: 45px; border-radius: 14px; font-size: 14px;" onclick="toggleLanguage()" id="langBtn">EN</div>
+    </header>
+
+    <div id="home-view">
+        
+        <div class="hero-section">
+            <h1 class="hero-title" data-key="heroTitle">توقيع وتثبيت <span>التطبيقات</span></h1>
+            <p class="hero-desc" data-key="heroDesc">منصة VOID هي الخيار الأفضل لتثبيت تطبيقات بلس وتوقيع ملفات IPA بسهولة وبدون كمبيوتر عبر خوادم صاروخية.</p>
+        </div>
+
+        <div class="top-actions-container fade-in-up">
+            <div class="action-btn" data-key="protectBtn" onclick="handleActionClick('protectionLink')">تثبيت ملف الحماية</div>
+        </div>
+
+        <div class="ksign-section-header fade-in-up">
+            <h2 class="ksign-title" data-key="ksignHeader">تطبيقات KSign المتاحة</h2>
+        </div>
+        
+        <div class="cards-scroll-container fade-in-up" id="ksignTrack"></div>
+
+        <div class="features-grid fade-in-up">
+            <div class="feature-card">
+                <div class="f-icon-box"><svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg></div>
+                <div class="f-title" data-key="feat1Title">سرعة التثبيت</div>
+                <div class="f-desc" data-key="feat1Desc">خوادم سريعة لتوقيع وتثبيت التطبيقات في ثواني معدودة دون انتظار</div>
+            </div>
+            <div class="feature-card">
+                <div class="f-icon-box"><svg viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18-.21 0-.41-.06-.57-.18l-7.9-4.44A.991.991 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18.21 0 .41.06.57.18l7.9 4.44c.32.17.53.5.53.88v9zM12 4.15L6.04 7.5 12 10.85l5.96-3.35L12 4.15zM5 15.91l6 3.38v-6.71L5 9.19v6.72zm14 0v-6.72l-6 3.39v6.71l6-3.38z"/></svg></div>
+                <div class="f-title" data-key="feat2Title">تثبيت أي IPA</div>
+                <div class="f-desc" data-key="feat2Desc">وقع وحمل أي ملف IPA بسهولة وسرعة دون أي تعقيدات</div>
+            </div>
+            <div class="feature-card">
+                <div class="f-icon-box"><svg viewBox="0 0 24 24"><path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1h-4v-2h4zM9 4c.55 0 1 .45 1 1h-4c0-.55.45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83 8.62 12 11 8.76l1-1.36 1 1.36L15.38 12 17 10.83 14.92 8H20v6z"/></svg></div>
+                <div class="f-title" data-key="feat3Title">شهادة مجانية مؤقتة</div>
+                <div class="f-desc" data-key="feat3Desc">الموقع يوفر شهادات مجانية دائماً ولكن قد تتعطل من 1 واحد الى 7 ايام وللحصول على شهادة بدون توقف تواصل معنا عبر الحسابات الموجودة داخل الموقع</div>
+            </div>
+        </div>
+
+        <div class="important-alert fade-in-up">
+            <div class="alert-text" data-key="alert">
+                <strong><span class="alert-icon">⚠️</span> تنبيه هام:</strong> إذا واجهت مشكلة في تشغيل التطبيقات بعد التثبيت، فهذا يعني أن جهازك مدرج ضمن القائمة السوداء. نوصيك بشراء شهادة رسمية موثوقة.
+            </div>
+        </div>
+
+        <div class="buy-card fade-in-up">
+            <div class="buy-title" data-key="vipTitle">اشتري شهادة بدون توقف</div>
+            <div class="price-container">
+                <span class="old-price">25$</span>
+                <span class="new-price">10$</span>
+            </div>
+            <div class="buy-btn" data-key="buyBtn" onclick="handleActionClick('supportLink')">اشتري الآن</div>
+            <div class="buy-footer" data-key="vipFooter">هذه الشهادة بدون توقف، وتوفر إمكانية التخلص من حظر البلاك لست نهائياً.</div>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('contextmenu', e => e.preventDefault(), { passive: false });
+        document.addEventListener('dragstart', e => e.preventDefault(), { passive: false });
+        document.addEventListener('touchstart', function(e) { if(e.touches.length > 1) e.preventDefault(); }, { passive: false });
+        document.addEventListener('gesturestart', e => e.preventDefault());
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(e) { let now = (new Date()).getTime(); if (now - lastTouchEnd <= 300) e.preventDefault(); lastTouchEnd = now; }, false);
+    </script>
+
+    <script>
+        let siteLinks = { supportLink: "#", channelLink: "#", protectionLink: "#", certificatesLink: "#", ksignLinks: [] };
+
+        const ksignNames = [
+            { sub: "National Oilwell Varco, Inc." },
+            { sub: "VIETNAM AIRLINES JSC" },
+            { sub: "PowerChina International Group Limited" },
+            { sub: "PowerChina International Group Limited" },
+            { sub: "PowerChina International Group Limited" },
+            { sub: "PowerChina International Group Limited" },
+            { sub: "PowerChina International Group Limited" },
+            { sub: "Qingdao Rural Commercial Bank Co., Ltd" },
+            { sub: "Commission on Elections" },
+            { sub: "Commission on Elections" },
+            { sub: "Commission on Elections" },
+            { sub: "Wasu Media & Network Co" },
+            { sub: "Luoyang Postal Administration" },
+            { sub: "Etisalat - Emirates Telecommunications" },
+            { sub: "China National Heavy Duty Truck" },
+            { sub: "China Telecommunications Corp" },
+            { sub: "Tianjin University of Commerce" },
+            { sub: "VIETTEL GROUP" },
+            { sub: "CHIBA INSTITUTE OF TECHNOLOGY" },
+            { sub: "CHIBA INSTITUTE OF TECHNOLOGY" }
+        ];
+
+        async function fetchLinksAndGenerateCards() {
+            const track = document.getElementById('ksignTrack');
+            try {
+                const response = await fetch('links.json');
+                const data = await response.json();
+                Object.assign(siteLinks, data);
+
+                let html = '';
+                for(let i = 0; i < siteLinks.ksignLinks.length; i++) {
+                    const appUrl = siteLinks.ksignLinks[i] || "#";
+                    const cert = ksignNames[i] || { sub: `نسخة ${i + 1}` };
+                    
+                    html += `
+                    <div class="ksign-card">
+                        <img src="https://i.postimg.cc/fLk2HCyk/IMG-3180.jpg" class="main-app-icon" alt="KSign">
+                        <div class="front-title" data-key="appName">كي ساين</div>
+                        <div class="front-sub">${cert.sub}</div>
+                        <div class="install-action-btn" data-key="installBtn" onclick="handleInstallClick('${appUrl}')">تثبيت</div>
+                    </div>`;
+                }
+                track.innerHTML = html;
+                toggleLanguage(currentLang, true);
+                
+            } catch (error) {
+                console.error("Error loading links:", error);
+                track.innerHTML = '<div style="color:#ff6961; text-align:center; padding: 20px;">خطأ في تحميل التطبيقات. تأكد من رفع ملف links.json</div>';
+            }
+        }
+
+        // النجوم
+        function initStars() {
+            const canvas = document.getElementById('stars-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const stars = [];
+            for(let i = 0; i < 200; i++) {
+                stars.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, radius: Math.random() * 1.5, vy: Math.random() * 0.5 + 0.1 });
+            }
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                for(let star of stars) {
+                    ctx.moveTo(star.x, star.y); ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                    star.y -= star.vy; if(star.y < 0) { star.y = canvas.height; star.x = Math.random() * canvas.width; }
+                }
+                ctx.fill(); requestAnimationFrame(draw);
+            }
+            draw();
+            window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+        }
+
+        const translations = {
+            ar: { 
+                location: "المنصة الرسمية", protectBtn: "تثبيت ملف الحماية", downloadCertsBtn: "تحميل جميع الشهادات",
+                heroTitle: "توقيع وتثبيت <span>التطبيقات</span>", heroDesc: "منصة VOID هي الخيار الأفضل لتثبيت تطبيقات بلس وتوقيع ملفات IPA بسهولة وبدون كمبيوتر عبر خوادم صاروخية.",
+                ksignHeader: "تطبيقات KSign المتاحة", appName: "كي ساين", installBtn: "تثبيت",
+                feat1Title: "سرعة التثبيت", feat1Desc: "خوادم سريعة لتوقيع وتثبيت التطبيقات في ثواني معدودة دون انتظار", feat2Title: "تثبيت أي IPA", feat2Desc: "وقع وحمل أي ملف IPA بسهولة وسرعة دون أي تعقيدات", feat3Title: "شهادة مجانية مؤقتة", feat3Desc: "الموقع يوفر شهادات مجانية دائماً ولكن قد تتعطل من 1 واحد الى 7 ايام وللحصول على شهادة بدون توقف تواصل معنا عبر الحسابات الموجودة داخل الموقع",
+                alert: "<strong><span class=\"alert-icon\">⚠️</span> تنبيه هام:</strong> إذا واجهت مشكلة في تشغيل التطبيقات بعد التثبيت، فهذا يعني أن جهازك مدرج ضمن القائمة السوداء. نوصيك بشراء شهادة رسمية موثوقة.",
+                vipTitle: "اشتري شهادة بدون توقف", buyBtn: "اشتري الآن", vipFooter: "هذه الشهادة بدون توقف، وتوفر إمكانية التخلص من حظر البلاك لست نهائياً.", loadingText: "جاري المعالجة..."
+            },
+            en: { 
+                location: "OFFICIAL PLATFORM", protectBtn: "Install Protection", downloadCertsBtn: "Download All Certificates",
+                heroTitle: "Sign & Install <span>Apps</span>", heroDesc: "VOID is the best platform to install tweaked apps and sign IPA files easily without a computer.",
+                ksignHeader: "Available KSign Apps", appName: "KSign", installBtn: "INSTALL",
+                feat1Title: "Installation Speed", feat1Desc: "Fast servers to sign and install applications in seconds without waiting", feat2Title: "Install any IPA", feat2Desc: "Sign and download any IPA file easily and quickly without complications", feat3Title: "Temporary Free Cert", feat3Desc: "The site provides free certs but they may fail in 1-7 days. For a non-stop cert, contact our support inside the site.",
+                alert: "<strong><span class=\"alert-icon\">⚠️</span> ALERT:</strong> If apps don't run after install, your device is blacklisted. We recommend buying a trusted VIP cert.",
+                vipTitle: "Buy Non-Stop Cert", buyBtn: "Buy Now", vipFooter: "This cert is non-stop and removes device blacklist permanently.", loadingText: "Processing..."
+            }
+        };
+
+        let currentLang = 'ar';
+
+        function toggleLanguage(forcedLang, keepCurrent = false) {
+            if(!keepCurrent) { currentLang = currentLang === 'ar' ? 'en' : 'ar'; } else if (forcedLang) { currentLang = forcedLang; }
+            document.documentElement.lang = currentLang; document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            document.getElementById('langBtn').innerText = currentLang === 'ar' ? 'EN' : 'AR';
+            
+            document.querySelectorAll('[data-key]').forEach(el => { 
+                const key = el.getAttribute('data-key');
+                if (translations[currentLang][key]) { el.innerHTML = translations[currentLang][key]; }
+            });
+        }
+
+        function handleActionClick(linkKey) {
+            const url = siteLinks[linkKey];
+            if (!url || url === '#') return;
+            const loadingModal = document.getElementById('loading-overlay');
+            loadingModal.classList.add('active');
+            setTimeout(() => {
+                window.location.href = url;
+                setTimeout(() => { loadingModal.classList.remove('active'); }, 500);
+            }, 800);
+        }
+
+        function handleInstallClick(installUrl) {
+            if (!installUrl || installUrl === '#') return;
+            const loadingModal = document.getElementById('loading-overlay');
+            loadingModal.classList.add('active');
+            window.location.href = installUrl;
+            setTimeout(() => {
+                const channelUrl = siteLinks.channelLink && siteLinks.channelLink !== '#' ? siteLinks.channelLink : 'https://t.me/hl00ss';
+                window.location.href = channelUrl;
+                setTimeout(() => { loadingModal.classList.remove('active'); }, 1000);
+            }, 3000);
+        }
+
+        window.onload = function() {
+            initStars();
+            fetchLinksAndGenerateCards();
+        };
+    </script>
+</body>
+</html>
